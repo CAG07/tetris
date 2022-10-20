@@ -21,8 +21,8 @@ pygame.font.init()
 # GLOBALS VARS
 s_width = 800
 s_height = 700
-play_width = 300  # meaning 300 // 10 = 30 width per block
-play_height = 600  # meaning 600 // 20 = 20 height per block
+play_width = 300  # meaning 300 // 10 = 30 width per block , play_width and play_height represent the red square box (border for the game)
+play_height = 600  # meaning 600 // 20 = 20 height per block, The numbers divided 10 & 20 are because Tetris is played on a 10 (width) x 20 (height) grid
 block_size = 30
 
 top_left_x = (s_width - play_width) // 2
@@ -138,8 +138,13 @@ shape_colors = [(0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0), (255, 16
 # index 0 - 6 represent shape
 
 
-class Piece(object):
-	pass
+class Piece(object): # *
+	def __init__(self, x, y, shape):
+            self.x = x
+            self.y = y
+            self.shape = shape
+            self.color = shape_colors(shapes.index(shape))
+            self.rotation = 0
 
 def create_grid(locked_positions={}):
 	pass
