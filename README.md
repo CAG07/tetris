@@ -1,2 +1,2 @@
-# tetris
+# Tetris
 FCC Build Tetris!
