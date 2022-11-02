@@ -1,3 +1,4 @@
+from matplotlib.pyplot import grid
 import pygame
 import random
 
@@ -22,7 +23,7 @@ pygame.font.init()
 s_width = 800
 s_height = 700
 play_width = 300  # meaning 300 // 10 = 30 width per block , play_width and play_height represent the red square box (border for the game)
-play_height = 600  # meaning 600 // 20 = 20 height per block, The numbers divided 10 & 20 are because Tetris is played on a 10 (width) x 20 (height) grid
+play_height = 600  # meaning 600 // 20 = 30 height per block, The numbers divided 10 & 20 are because Tetris is played on a 10 (width) x 20 (height) grid
 block_size = 30
 
 top_left_x = (s_width - play_width) // 2
@@ -147,7 +148,14 @@ class Piece(object): # *
             self.rotation = 0
 
 def create_grid(locked_positions={}):
-	pass
+	grid = [[(0,0,0)for x in range(10)] for x in range(20)] #There are 10 blocks in each row and 20 rows total
+
+      for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                  if (j,i) in locked_pos:       #Rows are represented by i and columns by j
+                        c = locked_pos[(j,i)]
+                        grid[i][j] = c
+      return grid
 
 def convert_shape_format(shape):
 	pass
@@ -159,8 +167,7 @@ def check_lost(positions):
 	pass
 
 def get_shape():
-	pass
-
+	return random.choice(shapes)
 
 def draw_text_middle(text, size, color, surface):
 	pass
