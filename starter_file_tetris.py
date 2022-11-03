@@ -152,7 +152,7 @@ def create_grid(locked_positions={}):
 
       for i in range(len(grid)):
             for j in range(len(grid[i])):
-                  if (j,i) in locked_pos:       #Rows are represented by i and columns by j
+                  if (j, i) in locked_pos:       #Rows are represented by i and columns by j
                         c = locked_pos[(j,i)]
                         grid[i][j] = c
       return grid
@@ -172,17 +172,30 @@ def get_shape():
 def draw_text_middle(text, size, color, surface):
 	pass
    
-def draw_grid(surface, row, col):
-	pass
-
+def draw_grid(surface):
+	
+      for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                  pygame.draw.rect(surface, grid[i][j], (top_left_x + j*block_size, top_left_y + i*block_size, block_size, block_size), 0) #block_size replaces 30, the 0 at the end designates filling in
+      
+      pygame.draw.rect(surface, (255,0,0), (top_left_x, top_left_y, play_width, play_height), 4) #These variables have already been defined, 4 is the border size
+      
 def clear_rows(grid, locked):
 
 
 def draw_next_shape(shape, surface):
 
 
-def draw_window(surface):
-	pass
+def draw_window(surface, grid):
+	surface.fill((0,0,0))
+
+      pygame.font.init()
+      font = pygame.font.SysFont('bookantiqua', 60)
+      label = font.render('Tetris', 1, (255,255,255))
+
+      surface.blit(label, (top_left_x + play_width/2 - (label.get.width()/2), 30))
+      draw_grid(surface, grid)
+      pygame.display.update()
 
 def main():
 	pass
