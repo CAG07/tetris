@@ -197,7 +197,7 @@ def draw_window(surface, grid):
       draw_grid(surface, grid)
       pygame.display.update()
 
-def main():
+def main(win):
 	
       locked_positions = {}
       grid = create_grid(locked_positions)
@@ -232,12 +232,15 @@ def main():
                             if not(valid_space(current_piece, grid)):
                               current_piece -= 1
 
-            draw_window(surface, grid)                           
+            draw_window(win, grid)                           
 
                   
 
-def main_menu():
-	pass
+def main_menu(win): # *
+	main(win)
+      
 
+win = pygame.display.set_mode((s_width, s_height))
+pygame.display.set_caption('Tetris')
 main_menu()  # start game
 
