@@ -217,8 +217,21 @@ def draw_grid(surface, grid):
 #def clear_rows(grid, locked):
 
 
-#def draw_next_shape(shape, surface):
+def draw_next_shape(shape, surface):
+    font = pygame.font.SysFont('bookantiqua', 30)
+    label = font.render('Next Shape', 1, (255,255,255))
 
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height/2 - 100
+    format = shape.shape[shape.rotation % len(shape.shape)]
+
+    for i, line in enumerate(format):
+        row = list(line)
+        for j, column in enumerate(row):
+            if column == '0':
+                pygame.draw.rect(surface, shape.color, (sx + j*30, sy + i*block_size, block_size, block_size), 0)
+
+    surface.blit(label, (sx + 10, sy - 30))
 
 def draw_window(surface, grid):
     surface.fill((0,0,0))
@@ -229,7 +242,7 @@ def draw_window(surface, grid):
 
     surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), 30))
     draw_grid(surface, grid)
-    pygame.display.update()
+    #pygame.display.update()
 
 def main(win):
 
@@ -297,6 +310,8 @@ def main(win):
                   #{(1,2):(255,0,0)} This is a dictionary and tuple with a key of the position and the value of the color
 
             draw_window(win, grid)
+            draw_next_shape(next_piece, win)
+            pygame.display.update()
 
             #This will check if the game is lost and break out of the while loop if lost
             if check_lost(locked_positions):
@@ -315,4 +330,4 @@ pygame.display.set_caption('Tetris')
 # start game
 main_menu(win)
 
-#55:00
+#01:04
