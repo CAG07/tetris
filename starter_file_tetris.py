@@ -181,7 +181,8 @@ def convert_shape_format(shape):
 def valid_space(shape, grid):
     accepted_pos = [[(j, i) for j in range(10) if grid[i][j] == (0,0,0)] for i in range(20)]
     accepted_pos = [j for sub in accepted_pos for j in sub]
-      #^This will take all the positions in our first accepted_pos list and flatten the list to eliminate sublists and make it easier to loop through
+      #^This will take all the positions in our first accepted_pos list and flatten
+      # the list to eliminate sublists and make it easier to loop through
 
     formatted = convert_shape_format(shape)
 
@@ -214,8 +215,27 @@ def draw_grid(surface, grid):
 
       pygame.draw.rect(surface, (255,0,0), (top_left_x, top_left_y, play_width, play_height), 4) #These variables have already been defined, 4 is the border size
 
-#def clear_rows(grid, locked):
+def clear_rows(grid, locked):
 
+    inc = 0
+    for i in range(len(grid)-1, -1, -1):
+        row = grid[i]
+        if (0,0,0) not in row:
+            inc += 1
+            ind = i
+            for j in range(len(row)):
+                try:
+                    del locked[(j,i)]
+                except:
+                    continue
+
+    #A new row is added to the top after the cleared row is deleted
+    if inc > 0:
+        for key in sorted(list(locked), key = lambda x: x[1])[::-1]:
+            x, y = key
+            if y < ind:
+                newKey = (x, y + inc)
+                locked[newKey] = locked.pop(key)
 
 def draw_next_shape(shape, surface):
     font = pygame.font.SysFont('bookantiqua', 30)
@@ -256,12 +276,19 @@ def main(win):
     clock = pygame.time.Clock()
     fall_time = 0
     fall_speed = 0.27
+    level_time = 0
 
     while run:
 
         grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
+        level_time += clock.get_rawtime()
         clock.tick()
+
+        if level_time/1000 > 5:
+            level_time = 0
+            if level_time > 0.06:
+                level_time -= 0.0025
 
         if fall_time/1000 > fall_speed:
             fall_time = 0
@@ -307,6 +334,7 @@ def main(win):
                   current_piece = next_piece
                   next_piece = get_shape()
                   change_piece = False
+                  clear_rows(grid, locked_positions)
                   #{(1,2):(255,0,0)} This is a dictionary and tuple with a key of the position and the value of the color
 
             draw_window(win, grid)
@@ -330,4 +358,4 @@ pygame.display.set_caption('Tetris')
 # start game
 main_menu(win)
 
-#01:04
+#01:21
