@@ -211,12 +211,13 @@ def draw_text_middle(surface, text, size, color):
     surface.blit(label, (top_left_x + play_width /2 - (label.get_width()/2), top_left_y + play_height /2 - label.get_height()/2))
 
 def draw_grid(surface, grid):
+    sx = top_left_x
+    sy = top_left_y
 
-      for i in range(len(grid)):
-            for j in range(len(grid[i])):
-                  pygame.draw.rect(surface, grid[i][j], (top_left_x + j*block_size, top_left_y + i*block_size, block_size, block_size), 0) #block_size replaces 30, the 0 at the end designates filling in
-
-      pygame.draw.rect(surface, (255,0,0), (top_left_x, top_left_y, play_width, play_height), 4) #These variables have already been defined, 4 is the border size
+    for i in range(len(grid)):
+        pygame.draw.line(surface, (128,128,128), (sx, sy + i*block_size), (sx+play_width, sy+ i*block_size))
+        for j in range(len(grid[i])):
+            pygame.draw.line(surface, (128,128,128), (sx + j*block_size, sy), (sx + j*block_size, sy + play_height))
 
 def clear_rows(grid, locked):
 
@@ -260,17 +261,28 @@ def draw_next_shape(shape, surface):
     surface.blit(label, (sx + 10, sy - 30))
 
 def update_score(nscore):
+    score = max_score()
+
+# The 3 lines below were replaced with score = max_score()
+#   with open('scores.txt', 'r') as f:
+#       lines = f.readlines()
+#       score = lines[0].strip()
+
+    with open('scores.txt', 'w') as f:
+        if int(score) > nscore:
+            f.write(str(score))
+        else:
+            f.write(str(nscore))
+
+def max_score():
     with open('scores.txt', 'r') as f:
         lines = f.readlines()
         score = lines[0].strip()
 
-        with open('scores.txt', 'w') as f:
-            if int(score) > nscore:
-                f.write(str(score))
-            else:
-                f.write(str(nscore))
+    return score
 
-def draw_window(surface, grid, score=0):
+
+def draw_window(surface, grid, score = 0, last_score = 0):
     surface.fill((0,0,0))
 
     pygame.font.init()
@@ -280,6 +292,7 @@ def draw_window(surface, grid, score=0):
     surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), 30))
     draw_grid(surface, grid)
 
+    #Current score
     font = pygame.font.SysFont('bookantiqua', 30)
     label = font.render('Score: ' + str(score), 1, (255,255,255))
 
@@ -288,13 +301,27 @@ def draw_window(surface, grid, score=0):
 
     surface.blit(label, (sx +10, sy + 150))
 
+    #High score
+    label = font.render('High Score: ' + last_score, 1, (255,255,255))
+
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height/2 - 100
+
+    surface.blit(label, (sx +10, sy - 150))
+
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            pygame.draw.rect(surface, grid[i][j], (top_left_x + j*block_size, top_left_y + i*block_size, block_size, block_size), 0) #block_size replaces 30, the 0 at the end designates filling in
+
+    pygame.draw.rect(surface, (255,0,0), (top_left_x, top_left_y, play_width, play_height), 4) #These variables have already been defined, 4 is the border size
+
+    draw_grid(surface, grid)
     #pygame.display.update()
 
 def main(win):
-
-    locked_positions = {}
+    last_score = max_score()
+    locked_positions = {} #(x,y):(255,0,0)
     grid = create_grid(locked_positions)
-
     change_piece = False
     run = True
     current_piece = get_shape()
@@ -335,7 +362,7 @@ def main(win):
                       if event.key == pygame.K_LEFT:
                           current_piece.x -= 1
                           if not(valid_space(current_piece, grid)):
-                              current_piece += 1
+                              current_piece.x += 1
                       if event.key == pygame.K_RIGHT:
                           current_piece.x += 1
                           if not(valid_space(current_piece, grid)):
@@ -366,7 +393,7 @@ def main(win):
                   score += clear_rows(grid, locked_positions) * 10
                   #{(1,2):(255,0,0)} This is a dictionary and tuple with a key of the position and the value of the color
 
-            draw_window(win, grid, score)
+            draw_window(win, grid, score, last_score)
             draw_next_shape(next_piece, win)
             pygame.display.update()
 
@@ -399,5 +426,3 @@ win = pygame.display.set_mode((s_width, s_height))
 pygame.display.set_caption('Tetris')
 # start game
 main_menu(win)
-
-#01:27
