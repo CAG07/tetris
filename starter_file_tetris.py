@@ -204,8 +204,11 @@ def check_lost(positions):
 def get_shape():
 	return Piece(5, 0, random.choice(shapes))
 
-def draw_text_middle(text, size, color, surface):
-	pass
+def draw_text_middle(surface, text, size, color):
+    font = pygame.font.SysFont("bookantiqua", size, bold=True)
+    label = font.render(text, 1, color)
+
+    surface.blit(label, top_left_x + play_width /2 - (label.get_width()/2), top_left_y + play_height/2 -label.get_height()/2)
 
 def draw_grid(surface, grid):
 
@@ -237,6 +240,9 @@ def clear_rows(grid, locked):
                 newKey = (x, y + inc)
                 locked[newKey] = locked.pop(key)
 
+    return inc
+
+
 def draw_next_shape(shape, surface):
     font = pygame.font.SysFont('bookantiqua', 30)
     label = font.render('Next Shape', 1, (255,255,255))
@@ -253,7 +259,7 @@ def draw_next_shape(shape, surface):
 
     surface.blit(label, (sx + 10, sy - 30))
 
-def draw_window(surface, grid):
+def draw_window(surface, grid, score=0):
     surface.fill((0,0,0))
 
     pygame.font.init()
@@ -262,6 +268,15 @@ def draw_window(surface, grid):
 
     surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), 30))
     draw_grid(surface, grid)
+
+    font = pygame.font.SysFont('bookantiqua', 30)
+    label = font.render('Score: ' + str(score), 1, (255,255,255))
+
+    sx = top_left_x + play_width + 50
+    sy = top_left_y + play_height/2 - 100
+
+    surface.blit(label, (sx +10, sy + 150))
+
     #pygame.display.update()
 
 def main(win):
@@ -277,6 +292,7 @@ def main(win):
     fall_time = 0
     fall_speed = 0.27
     level_time = 0
+    score = 0
 
     while run:
 
@@ -287,8 +303,8 @@ def main(win):
 
         if level_time/1000 > 5:
             level_time = 0
-            if level_time > 0.06:
-                level_time -= 0.0025
+            if fall_speed > 0.06:
+                fall_speed -= 0.0025
 
         if fall_time/1000 > fall_speed:
             fall_time = 0
@@ -334,10 +350,10 @@ def main(win):
                   current_piece = next_piece
                   next_piece = get_shape()
                   change_piece = False
-                  clear_rows(grid, locked_positions)
+                  score = clear_rows(grid, locked_positions) * 10
                   #{(1,2):(255,0,0)} This is a dictionary and tuple with a key of the position and the value of the color
 
-            draw_window(win, grid)
+            draw_window(win, grid, score)
             draw_next_shape(next_piece, win)
             pygame.display.update()
 
@@ -358,4 +374,4 @@ pygame.display.set_caption('Tetris')
 # start game
 main_menu(win)
 
-#01:21
+#01:27
