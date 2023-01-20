@@ -379,7 +379,7 @@ def main(win):
                 #Update score
                 update_score(score)
 
-    pygame.display.quit()
+    #pygame.display.quit() commented out so the game will return to 'Press Any Key To Play' after GAME OVER is displayed
 
 def main_menu(win): # *
     run = True
