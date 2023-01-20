@@ -208,7 +208,7 @@ def draw_text_middle(surface, text, size, color):
     font = pygame.font.SysFont("bookantiqua", size, bold=True)
     label = font.render(text, 1, color)
 
-    surface.blit(label, top_left_x + play_width /2 - (label.get_width()/2), top_left_y + play_height/2 -label.get_height()/2)
+    surface.blit(label, (top_left_x + play_width /2 - (label.get_width()/2), top_left_y + play_height /2 - label.get_height()/2))
 
 def draw_grid(surface, grid):
 
@@ -259,6 +259,17 @@ def draw_next_shape(shape, surface):
 
     surface.blit(label, (sx + 10, sy - 30))
 
+def update_score(nscore):
+    with open('scores.txt', 'r') as f:
+        lines = f.readlines()
+        score = lines[0].strip()
+
+        with open('scores.txt', 'w') as f:
+            if int(score) > nscore:
+                f.write(str(score))
+            else:
+                f.write(str(nscore))
+
 def draw_window(surface, grid, score=0):
     surface.fill((0,0,0))
 
@@ -293,6 +304,7 @@ def main(win):
     fall_speed = 0.27
     level_time = 0
     score = 0
+    #last_score = max_score() # will create this function later
 
     while run:
 
@@ -317,6 +329,7 @@ def main(win):
             for event in pygame.event.get():
                   if event.type == pygame.QUIT:
                         run = False
+                        pygame.display.quit()
 
                   if event.type == pygame.KEYDOWN:
                       if event.key == pygame.K_LEFT:
@@ -350,7 +363,7 @@ def main(win):
                   current_piece = next_piece
                   next_piece = get_shape()
                   change_piece = False
-                  score = clear_rows(grid, locked_positions) * 10
+                  score += clear_rows(grid, locked_positions) * 10
                   #{(1,2):(255,0,0)} This is a dictionary and tuple with a key of the position and the value of the color
 
             draw_window(win, grid, score)
@@ -359,15 +372,28 @@ def main(win):
 
             #This will check if the game is lost and break out of the while loop if lost
             if check_lost(locked_positions):
+                draw_text_middle(win, "GAME OVER", 80, (255,255,255))
+                pygame.display.update()
+                pygame.time.delay(3000)
                 run = False
+                #Update score
+                update_score(score)
 
     pygame.display.quit()
 
-
-
 def main_menu(win): # *
-	main(win)
+    run = True
+    while run:
+        win.fill((0,0,0))
+        draw_text_middle(win, 'Press Any Key To Play', 60, (255,255,255))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+               main(win)
 
+    pygame.display.quit()
 
 win = pygame.display.set_mode((s_width, s_height))
 pygame.display.set_caption('Tetris')
